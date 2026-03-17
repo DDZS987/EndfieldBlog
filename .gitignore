@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+Thumbs.db
+
+# 编辑器/工具目录
+.claude/
+.playwright-mcp/
+
+# 课程作业/参考文档（非项目源码）
+*.docx
+项目真实示例/
+WBS.md
+WBS2.md
+PROJECT_PLAN.md
+截图*

@@ -1,0 +1,72 @@
+@use './variables' as *;
+@use './reset';
+@use './animations';
+
+// ─── 字体引入 ────────────────────────────────────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+// ─── 滚动条美化 ──────────────────────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-void);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.3);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(0, 210, 255, 0.6);
+  }
+}
+
+// ─── 文字选中 ────────────────────────────────────────────────────────────────
+::selection {
+  background: rgba(0, 210, 255, 0.2);
+  color: var(--accent-cyan);
+}
+
+// ─── 通用工具类 ──────────────────────────────────────────────────────────────
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media (max-width: 640px) {
+    padding: 0 1.25rem;
+  }
+}
+
+.section {
+  padding: 6rem 0;
+
+  @media (max-width: 768px) { padding: 4rem 0; }
+  @media (max-width: 640px) { padding: 3rem 0; }
+}
+
+.glow-text {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+}
+
+.glow-text-purple {
+  color: var(--accent-purple);
+  text-shadow: 0 0 20px rgba(123, 47, 247, 0.5);
+}
+
+.glow-border {
+  border: var(--border-glow);
+  box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.03);
+}
+
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--border-subtle);
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}

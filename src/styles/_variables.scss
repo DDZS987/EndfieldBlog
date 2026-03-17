@@ -1,0 +1,49 @@
+// ─── CSS 变量（运行时可访问）────────────────────────────────────────────────
+:root {
+  // 背景层级
+  --bg-void:      #020508;
+  --bg-primary:   #060a0f;
+  --bg-secondary: #0d1421;
+  --bg-overlay:   rgba(6, 10, 15, 0.85);
+  --bg-card:      rgba(13, 20, 33, 0.7);
+
+  // 强调色
+  --accent-cyan:   #00d2ff;
+  --accent-purple: #7b2ff7;
+  --accent-gold:   #c8a96e;
+  --accent-red:    #ff4d6d;
+
+  // 文字色
+  --text-primary:   #e8f4fd;
+  --text-secondary: #8ba3c7;
+  --text-dim:       #3a5070;
+
+  // 发光效果
+  --glow-cyan:   0 0 20px rgba(0, 210, 255, 0.4), 0 0 60px rgba(0, 210, 255, 0.1);
+  --glow-purple: 0 0 20px rgba(123, 47, 247, 0.4), 0 0 60px rgba(123, 47, 247, 0.1);
+  --glow-gold:   0 0 15px rgba(200, 169, 110, 0.3);
+
+  // 边框
+  --border-glow:   1px solid rgba(0, 210, 255, 0.25);
+  --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+
+  // 间距
+  --nav-height: 64px;
+
+  // 过渡
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+// ─── SCSS 变量（编译时）──────────────────────────────────────────────────────
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+@mixin respond-to($bp) {
+  @if $bp == sm { @media (max-width: #{$breakpoint-sm}) { @content; } }
+  @else if $bp == md { @media (max-width: #{$breakpoint-md}) { @content; } }
+  @else if $bp == lg { @media (max-width: #{$breakpoint-lg}) { @content; } }
+  @else if $bp == xl { @media (max-width: #{$breakpoint-xl}) { @content; } }
+}

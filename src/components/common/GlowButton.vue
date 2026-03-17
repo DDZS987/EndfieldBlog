@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    class="glow-btn"
+    class="glow-btn btn"
     :class="[`glow-btn--${variant}`, { 'glow-btn--outline': outline }]"
     v-bind="$attrs"
   >

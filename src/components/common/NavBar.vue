@@ -1,7 +1,7 @@
 <template>
   <!-- 顶栏本体 -->
-  <header class="navbar" :class="{ 'navbar--scrolled': scrolled }">
-    <RouterLink class="navbar__logo" to="/" @click="close">
+  <header class="navbar navbar-dark navbar-expand-md" :class="{ 'navbar--scrolled': scrolled }">
+    <RouterLink class="navbar__logo navbar-brand" to="/" @click="close">
       <span class="navbar__bracket">[</span>Portfolio<span class="navbar__bracket">]</span>
     </RouterLink>
 
@@ -10,15 +10,15 @@
         v-for="item in nav"
         :key="item.path"
         :to="item.path"
-        class="navbar__link"
-        :class="{ 'navbar__link--active': active === item.key }"
+        class="navbar__link nav-link"
+        :class="{ 'navbar__link--active active': active === item.key }"
       >
         <small>{{ item.no }}</small>{{ item.label }}
       </RouterLink>
     </nav>
 
     <button
-      class="navbar__burger"
+      class="navbar__burger navbar-toggler border-0"
       :class="{ 'navbar__burger--open': open }"
       @click="toggle"
       aria-label="导航菜单"

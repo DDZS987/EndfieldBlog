@@ -6,9 +6,9 @@
       <p class="stack-page__sub">从零到现在，记录每一个技术节点。</p>
     </div>
 
-    <div class="stack-page__body container">
+    <div class="stack-page__body container row gx-5">
       <!-- 左：技术图标 -->
-      <aside class="stack-page__badges">
+      <aside class="stack-page__badges col-lg-4 col-12">
         <div
           v-for="group in techGroups"
           :key="group.label"
@@ -27,7 +27,7 @@
       </aside>
 
       <!-- 右：时间线 -->
-      <section class="stack-page__timeline">
+      <section class="stack-page__timeline col-lg-8 col-12">
         <Timeline />
       </section>
     </div>

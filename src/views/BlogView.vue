@@ -9,8 +9,10 @@
       <div v-if="posts.length === 0" class="blog-page__empty">
         <p class="mono" style="color: var(--text-dim)">// 暂无文章</p>
       </div>
-      <div v-else class="blog-page__grid">
-        <PostCard v-for="post in posts" :key="post.slug" :post="post" />
+      <div v-else class="blog-page__grid row g-4">
+        <div v-for="post in posts" :key="post.slug" class="col-12 col-md-6 col-xl-4">
+          <PostCard :post="post" />
+        </div>
       </div>
     </div>
   </main>

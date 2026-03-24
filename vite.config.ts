@@ -4,7 +4,7 @@ import Markdown from 'unplugin-vue-markdown/vite'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  base: '/EndfieldBlog/',
+  base: '/',
   plugins: [
     vue({
       include: [/\.vue$/, /\.md$/],

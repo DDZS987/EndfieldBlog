@@ -1,39 +1,88 @@
 <template>
-  <section class="carousel" id="projects" ref="sectionRef">
-    <div class="carousel__pin" ref="pinRef">
-      <div class="carousel__track" ref="trackRef">
-        <ProjectSlide
-          v-for="(project, i) in projects"
-          :key="project.id"
-          :project="project"
-          :index="i"
-        />
-      </div>
+  <section class="carousel-section" id="projects">
 
-      <!-- 分页指示器 -->
-      <div class="carousel__dots" ref="dotsRef">
-        <button
-          v-for="(_, i) in projects"
-          :key="i"
-          class="carousel__dot"
-          :class="{ active: activeIndex === i }"
-          :aria-label="`跳到项目 ${i + 1}`"
-          @click="goTo(i)"
-        />
+    <!-- ── 页头区（深灰面板）───────────────────────────────────── -->
+    <header class="proj-header">
+      <div class="proj-header__bg" aria-hidden="true">
+        <div class="proj-header__map" />
       </div>
+      <div class="container proj-header__inner">
+        <div class="proj-header__left">
+          <div class="proj-header__icon" aria-hidden="true">
+            <img src="/assets/endfield/imgs/icon-rule.svg" width="22" height="26"
+              style="filter: brightness(0) invert(1);" alt="" />
+          </div>
 
-      <!-- 项目计数 -->
-      <div class="carousel__counter mono" ref="counterRef">
-        <span class="carousel__counter-current">{{ String(activeIndex + 1).padStart(2, '0') }}</span>
-        <span class="carousel__counter-sep">/</span>
-        <span class="carousel__counter-total">{{ String(projects.length).padStart(2, '0') }}</span>
+          <div class="proj-header__stripe" aria-hidden="true">
+            <span class="hstripe hstripe--pink" />
+            <span class="hstripe hstripe--yellow" />
+            <span class="hstripe hstripe--green" />
+          </div>
+
+          <div class="proj-header__text">
+            <p class="proj-header__sys akrobat">03 // PROJECTS</p>
+            <h2 class="proj-header__title">
+              项目
+              <span class="proj-header__title-en akrobat">/ PROJECTS</span>
+            </h2>
+            <p class="proj-header__sub">全屏轮播作品集</p>
+            <div class="proj-header__deco-bar" aria-hidden="true">
+              <img src="/assets/endfield/imgs/icon-deco.svg" alt="" />
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-header__right" aria-hidden="true">
+          <div class="proj-header__dots">
+            <span v-for="i in 9" :key="i" class="proj-header__dot" />
+          </div>
+          <img class="proj-header__circle" src="/assets/endfield/imgs/yellowCircle.png" alt="" />
+        </div>
+      </div>
+    </header>
+
+    <!-- ── 分隔 UI 条 ──────────────────────────────────────────── -->
+    <div class="ui-bar" aria-hidden="true">
+      <div class="ui-bar__gray" />
+      <div class="ui-bar__yellow" />
+    </div>
+
+    <!-- ── 轮播区（全屏高度）──────────────────────────────────── -->
+    <div class="carousel" ref="sectionRef">
+      <div class="carousel__pin" ref="pinRef">
+        <div class="carousel__track" ref="trackRef">
+          <ProjectSlide
+            v-for="(project, i) in projects"
+            :key="project.id"
+            :project="project"
+            :index="i"
+          />
+        </div>
+
+        <div class="carousel__dots" ref="dotsRef">
+          <button
+            v-for="(_, i) in projects"
+            :key="i"
+            class="carousel__dot"
+            :class="{ active: activeIndex === i }"
+            :aria-label="`跳到项目 ${i + 1}`"
+            @click="goTo(i)"
+          />
+        </div>
+
+        <div class="carousel__counter mono" ref="counterRef">
+          <span class="carousel__counter-current">{{ String(activeIndex + 1).padStart(2, '0') }}</span>
+          <span class="carousel__counter-sep">/</span>
+          <span class="carousel__counter-total">{{ String(projects.length).padStart(2, '0') }}</span>
+        </div>
       </div>
     </div>
+
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, onUnmounted, nextTick } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { projects } from '@/data/projects'
@@ -56,13 +105,11 @@ let resizeTimer: ReturnType<typeof setTimeout> | undefined
 
 const isMobile = () => window.matchMedia('(max-width: 768px)').matches
 
-// ── 桌面：GSAP ScrollTrigger Pin ─────────────────────────────────────────────
 function initDesktop() {
   const track = trackRef.value
   const pin   = pinRef.value
   if (!track || !pin) return
 
-  // 清除移动端可能残留的横向滚动位置
   pin.scrollLeft = 0
 
   ctx = gsap.context(() => {
@@ -76,11 +123,13 @@ function initDesktop() {
       scrollTrigger: {
         trigger: sectionRef.value,
         pin,
-        pinType: 'fixed', // 使用 position:fixed 而非 transform，避免影响其他 fixed 元素的 containing block
+        pinType: 'fixed',
         start: 'top top',
-        end: `+=${window.innerHeight * (projects.length - 1)}`,
+        // 函数式 end：实际轨道总宽度 - 单屏宽度，随 resize/refresh 自动重算
+        end: () => `+=${track.scrollWidth - window.innerWidth}`,
         scrub: 1,
         snap: 1 / (projects.length - 1),
+        invalidateOnRefresh: true,
         onUpdate(self) {
           activeIndex.value = Math.round(self.progress * (projects.length - 1))
         },
@@ -97,26 +146,19 @@ function initDesktop() {
 function destroyDesktop() {
   ctx?.revert()
   ctx = undefined
-  // 清除 GSAP 留下的内联样式
   if (trackRef.value) gsap.set(trackRef.value, { clearProps: 'all' })
   const slides = trackRef.value ? Array.from(trackRef.value.children) : []
   if (slides.length) gsap.set(slides, { clearProps: 'all' })
 }
 
-// ── 移动端：CSS scroll-snap + JS 补偿 UI 位置 ────────────────────────────────
 function initMobile() {
   const pin   = pinRef.value
   const track = trackRef.value
   if (!pin || !track) return
 
-  // 清除 GSAP 可能留下的内联样式，让 CSS 媒体查询接管布局
   gsap.set(track, { clearProps: 'all' })
   gsap.set(Array.from(track.children), { clearProps: 'all' })
 
-  // dots/counter 是 position:absolute，在 overflow-x:auto 的 pin 中会随内容滚离视口。
-  // 通过监听 scroll 事件，用 translateX(scrollLeft) 抵消偏移，使其始终锚定在视口内。
-  //   dots:    left:50% (=50vw 在滚动坐标系中) + translateX(sl) translateX(-50%) → 始终居中
-  //   counter: right:1.25rem (left edge 在 100vw-w-1.25rem) + translateX(sl) → 始终贴右
   const dots    = dotsRef.value
   const counter = counterRef.value
 
@@ -129,9 +171,8 @@ function initMobile() {
 
   mobileScrollHandler = syncUI
   pin.addEventListener('scroll', mobileScrollHandler, { passive: true })
-  syncUI() // 初始同步，确保首屏就显示正确
+  syncUI()
 
-  // IntersectionObserver 感知当前可见的 slide，同步指示器高亮
   mobileObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -154,20 +195,16 @@ function destroyMobile() {
     pinRef.value?.removeEventListener('scroll', mobileScrollHandler)
     mobileScrollHandler = undefined
   }
-  // 重置 JS 注入的 transform，避免切回桌面模式时样式残留
   if (dotsRef.value)    dotsRef.value.style.transform    = ''
   if (counterRef.value) counterRef.value.style.transform = ''
 }
 
-// ── 跳转到指定幻灯片 ─────────────────────────────────────────────────────────
 function goTo(i: number) {
   activeIndex.value = i
   if (isMobile()) {
-    // 移动端：驱动原生横向滚动
     const slide = trackRef.value?.children[i] as HTMLElement | undefined
     slide?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' })
   } else {
-    // 桌面端：通过滚动窗口来驱动 ScrollTrigger（避免与 scrub 冲突）
     const section = sectionRef.value
     if (!section) return
     const targetScroll = section.offsetTop + i * window.innerHeight
@@ -175,7 +212,6 @@ function goTo(i: number) {
   }
 }
 
-// ── 响应窗口大小变化（横竖屏切换 / 浏览器缩放）──────────────────────────────
 function handleResize() {
   clearTimeout(resizeTimer)
   resizeTimer = setTimeout(() => {
@@ -193,74 +229,251 @@ function handleResize() {
 }
 
 onMounted(() => {
-  if (isMobile()) {
-    initMobile()
-    currentMode = 'mobile'
-  } else {
-    initDesktop()
-    currentMode = 'desktop'
-  }
   window.addEventListener('resize', handleResize)
+
+  // 用 nextTick 延迟，确保 StackPreview（兄弟组件）的 GSAP pin-spacer
+  // 已经插入文档流后，再计算本组件的 ScrollTrigger 触发位置
+  // Vue 子组件 onMounted 顺序：StackPreview → ProjectCarousel → HomeView
+  // nextTick 队列也按此顺序执行，保证 pin-spacer 先落地
+  nextTick(() => {
+    if (isMobile()) {
+      initMobile()
+      currentMode = 'mobile'
+    } else {
+      initDesktop()
+      currentMode = 'desktop'
+    }
+  })
 })
 
-onUnmounted(() => {
+// 页面过渡 leave 动画开始前立即销毁 GSAP pin，
+// 防止 position:fixed 的轮播层在路由切换期间残留到其他页面
+onBeforeUnmount(() => {
   clearTimeout(resizeTimer)
   destroyDesktop()
   destroyMobile()
   window.removeEventListener('resize', handleResize)
 })
+
+onUnmounted(() => {
+  // 兜底：确保清理完成
+  destroyDesktop()
+  destroyMobile()
+})
 </script>
 
 <style lang="scss" scoped>
-// ── 桌面布局（默认）──────────────────────────────────────────────────────────
-.carousel {
+$yellow: #FFFF0F;
+$pink:   #FF1AAC;
+$green:  #00FFA2;
+$silver: #E5E5E5;
+
+// ── 整体区域 ──────────────────────────────────────────────────────────────────
+.carousel-section {
   position: relative;
-  // 桌面：section 足够高以容纳 ScrollTrigger 滚动空间
-  height: calc(100vh * v-bind('projects.length'));
+  // 必须高于 SiteFooter（z-index:3），否则 GSAP position:fixed 的 carousel__pin
+  // 会被 footer 压在后面，产生"穿模"效果
+  z-index: 4;
+  background: #FFFFFF;
+}
+
+// ── UI 条 ─────────────────────────────────────────────────────────────────────
+.ui-bar { position: relative; z-index: 2; }
+.ui-bar__yellow { height: 10px; background: $yellow; }
+.ui-bar__gray   { height: 3px;  background: #BEBEBE; }
+
+// ── 页头（深灰面板）──────────────────────────────────────────────────────────
+.proj-header {
+  position: relative;
+  z-index: 2;
+  background: #2C2C2C;
+}
+
+.proj-header__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.proj-header__map {
+  position: absolute;
+  inset: 0;
+  background:
+    url('/assets/endfield/imgs/card-tex.png') right center / 380px auto repeat-y,
+    url('/assets/endfield/imgs/bg_map.jpg') right center / 55% auto no-repeat;
+  opacity: 0.3;
 
   @media (max-width: 768px) {
-    // 移动端：section 占一个全屏，页面可正常垂直滚动经过此区域
+    display: none;
+  }
+}
+
+.proj-header__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-top: 2.2rem;
+  padding-bottom: 2.2rem;
+}
+
+.proj-header__left {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.proj-header__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: #3C3C3C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 15, 0.2);
+  margin-top: 4px;
+}
+
+.proj-header__stripe {
+  display: flex;
+  flex-direction: column;
+  width: 6px;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.hstripe { display: block; width: 100%; }
+.hstripe--pink   { flex: 1; background: $pink; }
+.hstripe--yellow { flex: 1; background: $yellow; }
+.hstripe--green  { flex: 2; background: $green; }
+
+.proj-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.proj-header__sys {
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(229, 229, 229, 0.45);
+  margin: 0;
+}
+
+.proj-header__title {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  letter-spacing: -0.02em;
+  color: $silver;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.proj-header__title-en {
+  font-size: 0.4em;
+  letter-spacing: 0.14em;
+  color: rgba(229, 229, 229, 0.35);
+  vertical-align: middle;
+  margin-left: 0.4em;
+}
+
+.proj-header__sub {
+  font-family: 'HarmonyOS SC', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(229, 229, 229, 0.45);
+  margin: 0;
+}
+
+.proj-header__deco-bar {
+  margin-top: 0.5rem;
+  img {
+    height: 18px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.2;
+  }
+}
+
+.proj-header__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.8rem;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) { display: none; }
+}
+
+.proj-header__dots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.proj-header__dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(229, 229, 229, 0.25);
+}
+
+.proj-header__circle {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  animation: yellowBreath 2.4s ease-in-out infinite;
+}
+
+// ── 轮播容器 ──────────────────────────────────────────────────────────────────
+.carousel {
+  position: relative;
+  background: #F5F5F5;
+  // 桌面端：不写死高度，由 GSAP pin-spacer 动态撑开（高度 = 100vh + end scroll距离）
+  // 写死 n×100vh 会导致宽屏下 vw>vh 时 pin 所需滚动量 > carousel 容器高度，
+  // footer 提前进入视口产生"穿模"
+  @media (max-width: 768px) {
+    // 移动端 scroll-snap 模式：固定 100vh 保持单屏展示
     height: 100vh;
   }
 }
 
 .carousel__pin {
   position: relative;
+  // 当 GSAP 将此元素设为 position:fixed 时，它会脱离父级 stacking context
+  // 直接参与 root stacking context，此时必须有明确 z-index 才能压过
+  // SiteFooter（z-index:3）。设为 10 保留充足余量
+  z-index: 10;
   width: 100%;
   height: 100vh;
-  // 桌面：溢出隐藏，由 GSAP 控制横向位移
   overflow: hidden;
 
   @media (max-width: 768px) {
-    // 移动端：改为横向原生滚动容器
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    // iOS 惯性滚动
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
   }
 }
 
 .carousel__track {
   display: flex;
   height: 100%;
-  // 桌面：由 GSAP 写入内联 width/transform，will-change 优化合成层
   will-change: transform;
 
   @media (max-width: 768px) {
-    // 强制覆盖 GSAP 可能残留的内联样式（clearProps 有时机问题时的兜底）
     width: max-content !important;
     transform: none !important;
   }
 }
 
-// 移动端每张 slide 占满视口宽度，并参与 scroll-snap
-// 用 :deep 穿透 scoped 作用于 ProjectSlide 根元素
 @media (max-width: 768px) {
   :deep(.slide) {
     width: 100vw;
@@ -270,7 +483,7 @@ onUnmounted(() => {
   }
 }
 
-// ── 共用：指示器 & 计数 ───────────────────────────────────────────────────────
+// ── 指示器 ────────────────────────────────────────────────────────────────────
 .carousel__dots {
   position: absolute;
   bottom: 2.5rem;
@@ -280,23 +493,21 @@ onUnmounted(() => {
   gap: 0.6rem;
   z-index: 10;
 
-  @media (max-width: 768px) {
-    bottom: 1.25rem;
-  }
+  @media (max-width: 768px) { bottom: 1.25rem; }
 }
 
 .carousel__dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(107, 107, 107, 0.3);
+  border: 1px solid rgba(107, 107, 107, 0.15);
   transition: all 0.3s ease;
   cursor: pointer;
 
   &.active {
-    background: var(--accent-cyan);
-    box-shadow: var(--glow-cyan);
+    background: $yellow;
+    box-shadow: 0 0 8px rgba(255, 255, 15, 0.4);
     transform: scale(1.3);
   }
 }
@@ -318,13 +529,20 @@ onUnmounted(() => {
 }
 
 .carousel__counter-current {
-  color: var(--accent-cyan);
+  color: $yellow;
   font-size: 1.2rem;
   font-weight: 600;
+  text-shadow: 0 0 8px rgba(255, 255, 15, 0.3);
 }
 
 .carousel__counter-sep,
 .carousel__counter-total {
   color: var(--text-dim);
+}
+
+// ── 动画 ──────────────────────────────────────────────────────────────────────
+@keyframes yellowBreath {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
 }
 </style>

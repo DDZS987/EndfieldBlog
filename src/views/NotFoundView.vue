@@ -4,7 +4,7 @@
       <p class="not-found__code mono">404</p>
       <h1 class="not-found__title">页面未找到</h1>
       <p class="not-found__desc">你访问的页面不存在或已被移除。</p>
-      <GlowButton tag="RouterLink" to="/" variant="cyan">返回首页</GlowButton>
+      <GlowButton tag="RouterLink" to="/" variant="white">返回首页</GlowButton>
     </div>
   </main>
 </template>

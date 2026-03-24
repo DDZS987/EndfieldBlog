@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "animejs": "3",
     "bootstrap": "^5.3.8",
     "gsap": "^3.12.5",
     "pinia": "^2.2.6",
@@ -17,6 +18,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.13",
     "@types/node": "^25.4.0",
     "@types/three": "^0.170.0",
     "@vitejs/plugin-vue": "^5.2.1",

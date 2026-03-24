@@ -1,0 +1,11 @@
+ ▐▛███▜▌   Claude Code v2.1.81
+▝▜█████▛▘  Sonnet 4.6 · API Usage Billing
+  ▘▘ ▝▝    D:\BaiduSyncdisk\myhtml2
+
+✻ Conversation compacted (ctrl+o for history)
+
+
+❯ Unknown skill: export                                                         
+
+❯ /export                                                                       
+  ⎿  Conversation copied to clipboard

@@ -1,166 +1,215 @@
 <template>
-  <RouterLink :to="`/blog/${post.slug}`" class="post-card glass glow-border">
-    <!-- 封面 -->
-    <div v-if="post.cover" class="post-card__cover">
-      <img :src="post.cover" :alt="post.title" loading="lazy" />
-    </div>
-    <div v-else class="post-card__cover-placeholder">
-      <span class="post-card__cover-icon mono">&gt;_</span>
+  <RouterLink :to="`/blog/${post.slug}`" class="post-card">
+
+    <!-- 时间戳列 -->
+    <div class="post-card__time">
+      <span class="post-card__date akrobat">{{ formatDate(post.date) }}</span>
+      <span class="post-card__idx akrobat">{{ idxStr }}</span>
     </div>
 
+    <!-- 主体 -->
     <div class="post-card__body">
-      <!-- 标签 -->
-      <div class="post-card__tags">
-        <span
-          v-for="tag in post.tags"
-          :key="tag"
-          class="post-card__tag mono"
-        >{{ tag }}</span>
+      <div v-if="post.tags.length" class="post-card__tags">
+        <span v-for="tag in post.tags" :key="tag" class="post-card__tag">[ {{ tag.toUpperCase().replace(/-/g, '_') }}
+          ]</span>
       </div>
-
       <h2 class="post-card__title">{{ post.title }}</h2>
-
       <p v-if="post.summary" class="post-card__summary">{{ post.summary }}</p>
-
-      <div class="post-card__meta mono">
-        <span>{{ post.date }}</span>
-        <span v-if="post.readingTime">· {{ post.readingTime }} min read</span>
-      </div>
     </div>
 
-    <!-- 悬浮发光线 -->
-    <div class="post-card__glow-line" />
+    <!-- 右侧箭头 -->
+    <div class="post-card__arrow" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <line x1="2" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" />
+        <polyline points="9,4 13,8 9,12" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </div>
+
   </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { PostMeta } from '@/types'
-defineProps<{ post: PostMeta }>()
+
+const props = defineProps<{ post: PostMeta; index?: number }>()
+
+const idxStr = computed(() => String((props.index ?? 0) + 1).padStart(2, '0'))
+
+function formatDate(date: string): string {
+  if (!date) return '----.--.--'
+  return date.replace(/-/g, '.')
+}
 </script>
 
 <style lang="scss" scoped>
+$yellow : #FFFF0F;
+
 .post-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  overflow: hidden;
+  display: grid;
+  // time | body | arrow
+  grid-template-columns: 108px 1fr auto;
+  align-items: stretch;
   text-decoration: none;
-  transition: transform 0.3s var(--ease-out-expo),
-              box-shadow 0.3s ease,
-              border-color 0.3s ease;
+  background: #FFFFFF;
+  border: 1px solid #E4E4E4;
+  border-left: 5px solid $yellow;
+  // 纹理直接作为卡片背景层，右侧对齐，不重复，不受 filter 干扰
+  background:
+    #FFFFFF
+    url('/assets/endfield/imgs/card-tex.png') right center / auto 100% no-repeat;
   position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+
+  // 右→左灰色渐隐遮罩，覆盖在纹理之上
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to left, rgba(140, 140, 140, 0.18) 0%, transparent 58%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // 底部扫光线（hover 时展开）
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: $yellow;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--glow-cyan);
-    border-color: rgba(0, 210, 255, 0.35);
+    border-color: rgba(255, 255, 15, 0.8);
+    box-shadow:
+      -3px 0 12px rgba(255, 255, 15, 0.25),
+      0 2px 20px rgba(255, 255, 15, 0.08);
+    transform: translateY(-1px);
 
-    .post-card__glow-line {
-      opacity: 1;
+    &::after {
       transform: scaleX(1);
     }
 
     .post-card__title {
-      color: var(--accent-cyan);
+      color: #1A1A1A;
+    }
+
+    .post-card__arrow {
+      color: $yellow;
+      opacity: 1;
+      transform: translateX(0);
     }
   }
-}
 
-.post-card__cover {
-  height: 180px;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-
-  .post-card:hover & img {
-    transform: scale(1.04);
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr auto;
   }
 }
 
-.post-card__cover-placeholder {
-  height: 120px;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 210, 255, 0.05),
-    rgba(123, 47, 247, 0.05)
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.post-card__cover-icon {
-  font-size: 2rem;
-  color: var(--text-dim);
-}
-
-.post-card__body {
-  padding: 1.2rem;
+// ── 时间戳 ────────────────────────────────────────────────────────────────────
+.post-card__time {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 1.3rem 1rem 1.3rem 1rem;
+  border-right: 1px solid #F0F0F0;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
+.post-card__date {
+  font-size: 0.72rem;
+  color: #888888;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.post-card__idx {
+  font-size: 0.58rem;
+  color: #CCCCCC;
+  letter-spacing: 0.12em;
+}
+
+// ── 主体 ──────────────────────────────────────────────────────────────────────
+.post-card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1.3rem 1.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+// 标签
 .post-card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .post-card__tag {
-  font-size: 0.68rem;
-  padding: 0.15rem 0.45rem;
-  border-radius: 2px;
-  background: rgba(0, 210, 255, 0.08);
-  border: 1px solid rgba(0, 210, 255, 0.18);
-  color: var(--accent-cyan);
-  letter-spacing: 0.05em;
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: #999999;
+  white-space: nowrap;
 }
 
+// 标题
 .post-card__title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.4;
-  transition: color 0.25s;
+  font-family: 'HarmonyOS SC', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333333;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+  margin: 0;
 }
 
+// 摘要
 .post-card__summary {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
+  font-family: 'HarmonyOS SC', sans-serif;
+  font-size: 0.8rem;
+  color: #999999;
+  line-height: 1.65;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
 }
 
-.post-card__meta {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  margin-top: auto;
-  padding-top: 0.5rem;
-  border-top: var(--border-subtle);
+// ── 箭头 ──────────────────────────────────────────────────────────────────────
+.post-card__arrow {
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: 0.4rem;
-}
-
-.post-card__glow-line {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.4s var(--ease-out-expo), opacity 0.3s;
-  opacity: 0;
+  align-items: center;
+  padding: 1.3rem 1.2rem;
+  color: #CCCCCC;
+  opacity: 0.6;
+  transform: translateX(-4px);
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.25s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
 }
 </style>

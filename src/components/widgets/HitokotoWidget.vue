@@ -32,8 +32,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-left: 2px solid rgba(123, 47, 247, 0.5);
+//  padding: 0 1.25rem;
+  border-left: 2px solid rgba(242, 242, 242, 0.25);
   text-align: left;
 }
 

@@ -33,9 +33,9 @@ export function useThreeScene(canvasRef: { value: HTMLCanvasElement | null }) {
     const positions = new Float32Array(count * 3)
     const colors = new Float32Array(count * 3)
 
-    const colorA = new THREE.Color('#00d2ff') // 青色
-    const colorB = new THREE.Color('#7b2ff7') // 紫色
-    const colorC = new THREE.Color('#c8a96e') // 金色（少量）
+    const colorA = new THREE.Color('#2A2A2A') // 深炭（浅色背景主粒子色）
+    const colorB = new THREE.Color('#5A5A5A') // 钢灰
+    const colorC = new THREE.Color('#8A6A30') // 深琥珀金
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3
@@ -44,7 +44,7 @@ export function useThreeScene(canvasRef: { value: HTMLCanvasElement | null }) {
       positions[i3 + 2] = (Math.random() - 0.5) * 10
 
       const t = Math.random()
-      const color = t < 0.6 ? colorA : t < 0.9 ? colorB : colorC
+      const color = t < 0.65 ? colorA : t < 0.92 ? colorB : colorC
       colors[i3]     = color.r
       colors[i3 + 1] = color.g
       colors[i3 + 2] = color.b

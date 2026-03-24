@@ -2,71 +2,235 @@
 @use './reset';
 @use './animations';
 
-// ─── 字体引入 ────────────────────────────────────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+// GSAP 初始化期间的滚动锁。
+// 防止 GSAP refresh() 内部的测量 scrollTo 被浏览器绘制为可见帧。
+// 由 main.ts 在 mount 前加锁，HomeView.onMounted 在 fonts.ready + refresh 后解锁。
+html.gsap-init-lock {
+  overflow: hidden !important;
+}
+
+// ─── 终末地字体引入 ───────────────────────────────────────────────────────────
+// Gilroy（英文展示字体）
+@font-face {
+  font-family: 'Gilroy';
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/Gilroy-Black.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/Gilroy-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/Gilroy-Medium.ttf') format('truetype');
+}
+
+// HarmonyOS Sans SC（中文字体）
+@font-face {
+  font-family: 'HarmonyOS SC';
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/HarmonyOS_Sans_SC_Black.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'HarmonyOS SC';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/HarmonyOS_Sans_SC_Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'HarmonyOS SC';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/HarmonyOS_Sans_SC_Medium.woff2') format('woff2'),
+    url('/assets/endfield/fonts/HarmonyOS_Sans_SC_Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'HarmonyOS SC';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/HarmonyOS_Sans_SC_Regular.woff2') format('woff2');
+}
+
+// Akrobat（数字/版本号展示字体）
+@font-face {
+  font-family: 'Akrobat';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/assets/endfield/fonts/Akrobat.otf') format('opentype');
+}
+
+// JetBrains Mono（仅代码块保留）
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+// ─── 全局字体应用 ────────────────────────────────────────────────────────────
+body {
+  font-family: var(--font-cn);
+  color: var(--text-primary);
+  background: var(--bg-void);
+}
 
 // ─── 滚动条美化 ──────────────────────────────────────────────────────────────
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-void);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 210, 255, 0.3);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
 
   &:hover {
-    background: rgba(0, 210, 255, 0.6);
+    background: rgba(255, 255, 15, 0.35);
   }
 }
 
 // ─── 文字选中 ────────────────────────────────────────────────────────────────
 ::selection {
-  background: rgba(0, 210, 255, 0.2);
-  color: var(--accent-cyan);
+  background: rgba(255, 255, 15, 0.15);
+  color: #A07800; // 选中文字用深金，在浅色高亮上可读
 }
 
 // ─── 通用工具类 ──────────────────────────────────────────────────────────────
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
-
-  @media (max-width: 640px) {
-    padding: 0 1.25rem;
-  }
+  padding: 0;
 }
 
 .section {
   padding: 6rem 0;
 
-  @media (max-width: 768px) { padding: 4rem 0; }
-  @media (max-width: 640px) { padding: 3rem 0; }
+  @media (max-width: 768px) {
+    padding: 4rem 0;
+  }
+
+  @media (max-width: 640px) {
+    padding: 3rem 0;
+  }
 }
 
+// 终末地工业文字样式
 .glow-text {
-  color: var(--accent-cyan);
-  text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+  color: var(--accent-primary);
+  text-shadow: var(--glow-primary);
 }
 
+.glow-text-yellow {
+  color: var(--accent-yellow);
+  text-shadow: var(--glow-yellow);
+}
+
+// 旧别名保留兼容
 .glow-text-purple {
-  color: var(--accent-purple);
-  text-shadow: 0 0 20px rgba(123, 47, 247, 0.5);
+  @extend .glow-text-yellow;
 }
 
 .glow-border {
   border: var(--border-glow);
-  box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.03);
+  box-shadow: inset 0 0 20px rgba(208, 208, 208, 0.02);
 }
 
 .glass {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: var(--border-subtle);
 }
 
+// 终末地斜切角面板（单侧）
+.panel-cut {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
+// ─── 终末地工业卡片（全局类，保证 ::before 纹理层跨 scoped 边界生效）──────────
+// 使用方法：在组件模板的卡片元素上添加 class="endfield-card"
+.endfield-card {
+  position: relative;
+  background: #EDEAE4;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  // 双斜切角（右上 + 左下）
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+
+  // ── 等高线纹理层 ────────────────────────────────────────────────────────────
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 50%;
+    height: 50%;
+    left: 50%;
+    top: 50%;
+    background-image: url('/assets/endfield/imgs/deco-bottom-right.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // ── 等高线纹理层（左上，左右翻转+颜色翻转）──────────────────────────────────
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    background-image: url('/assets/endfield/imgs/card-tex.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top left;
+    filter: invert(1);
+    transform: scaleX(-1);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // ── 确保所有直接子元素在纹理层之上 ──────────────────────────────────────────
+  >* {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 .mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-code);
+}
+
+// Akrobat 数字/版本号专用
+.akrobat {
+  font-family: 'Akrobat', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+// 全大写标签
+.label-tag {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }

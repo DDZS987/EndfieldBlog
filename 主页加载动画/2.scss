@@ -1,0 +1,118 @@
+$SPINNER_HEIGHT: 40px;
+$SPINNER_WIDTH: 40px;
+$SPINNER_COLOR: rgba(255, 255, 255, .9);
+$FONT_FAMILY: 'Nova Mono', monospace;
+
+#site_container {
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: black;
+    color: white;
+}
+
+#loader_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9990;
+    overflow: hidden;
+    background: linear-gradient(to bottom right, #f12711, #f5af19);
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.animItem {
+    height: $SPINNER_HEIGHT;
+    width: $SPINNER_WIDTH;
+    border: 5px solid rgba(255, 255, 255, 0);
+    border-top: 4px solid $SPINNER_COLOR;
+    border-bottom: 5px solid $SPINNER_COLOR;
+    border-radius: 10em;
+    overflow: hidden;
+    box-sizing: border-box;
+    z-index: 9999;
+    transform: scale(0);
+}
+
+.animFill {
+    position: relative;
+    height: $SPINNER_HEIGHT;
+    width: $SPINNER_WIDTH;
+    border-radius: 100%;
+    margin-top: -40px;
+    background: $SPINNER_COLOR;
+    z-index: 9998;
+    box-sizing: border-box;
+    transform: scale(0);
+    opacity: 0;
+}
+
+.animText {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 50px;
+    align-items: center;
+    margin-top: 75px;
+    opacity: 1;
+    color: $SPINNER_COLOR;
+    font-family: $FONT_FAMILY;
+    text-indent: .35em;
+    letter-spacing: .35em;
+    text-align: center;
+}
+
+.animText_letter {
+    display: inline-block;
+    margin-top: 25px;
+    opacity: 0;
+}
+
+.animLoaderBar {
+    height: 1px;
+    background: rgb(10, 10, 10);
+    width: 0;
+    position: absolute;
+}
+
+.site_content {
+    background: linear-gradient(to bottom right, rgba(241, 39, 17, .4), rgba(245, 175, 25, .4)), url('https://images.unsplash.com/photo-1517134191118-9d595e4c8c2b?ixlib=rb-0.3.5&q=85&fm=jpg&crop=entropy&cs=srgb&ixid=eyJhcHBfaWQiOjE0NTg5fQ&s=b033bae5bcc15e2f90003bd3e15b20d7');
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: $FONT_FAMILY;
+
+    h1 {
+        font-size: 4em;
+    }
+
+    p {
+        margin-top: -2em;
+    }
+
+    a {
+        text-decoration: none;
+        color: #fff
+    }
+}

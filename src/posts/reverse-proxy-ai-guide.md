@@ -1,8 +1,8 @@
 ---
 title: 反代 AI 经验总结：从零开始搭建自己的 API 中转
-date: 2026-03-10
+date: 2026-03-19
 tags: [AI, 工具, 经验总结]
-cover: /images/reverse-proxy-ai-cover.png
+cover: /images/reverse-proxy-ai-cover.webp
 summary: 折腾了一段时间反代 AI，踩了不少坑，把账号注册、支付、服务部署的完整流程整理成文，供有需要的朋友参考。
 ---
 

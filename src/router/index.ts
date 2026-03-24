@@ -33,7 +33,9 @@ const router = createRouter({
     if (to.hash) {
       return { el: to.hash, behavior: 'smooth' }
     }
-    return { top: 0, behavior: 'smooth' }
+    // 用 instant 而非 smooth：smooth 会产生一个持续约 1 秒的平滑动画，
+    // 若该动画与 GSAP 初始化的 gsap-init-lock 期重叠，解锁后滚动位置不确定。
+    return { top: 0, behavior: 'instant' }
   },
 })
 

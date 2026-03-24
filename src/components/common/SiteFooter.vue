@@ -13,8 +13,8 @@
       <!-- 右侧：社交 + 回到顶部 -->
       <div class="footer__right">
         <!-- 回到顶部 -->
-        <button class="footer__top-btn" @click="scrollToTop" aria-label="回到顶部">
-          <span class="footer__top-icon">↑</span>
+        <button class="footer__top-btn" @click="scrollToTop">
+          <span class="footer__top-icon" aria-hidden="true">↑</span>
           <span class="footer__top-label">TOP</span>
         </button>
       </div>

@@ -78,8 +78,7 @@ html.gsap-init-lock {
   src: url('/assets/endfield/fonts/Akrobat.otf') format('opentype');
 }
 
-// JetBrains Mono（仅代码块保留）
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+// JetBrains Mono 由 index.html 非阻塞加载
 
 // ─── 全局字体应用 ────────────────────────────────────────────────────────────
 body {

@@ -490,22 +490,35 @@ $silver: #E5E5E5;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 0.6rem;
+  gap: 0;
   z-index: 10;
 
   @media (max-width: 768px) { bottom: 1.25rem; }
 }
 
 .carousel__dot {
-  width: 8px;
-  height: 8px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: rgba(107, 107, 107, 0.3);
-  border: 1px solid rgba(107, 107, 107, 0.15);
-  transition: all 0.3s ease;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: transform 0.3s ease;
 
-  &.active {
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(107, 107, 107, 0.3);
+    box-shadow: 0 0 0 1px rgba(107, 107, 107, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  &.active::before {
     background: $yellow;
     box-shadow: 0 0 8px rgba(255, 255, 15, 0.4);
     transform: scale(1.3);

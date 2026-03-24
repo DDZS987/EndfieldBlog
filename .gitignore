@@ -17,4 +17,13 @@ Thumbs.db
 WBS.md
 WBS2.md
 PROJECT_PLAN.md
+
+# 截图 & 临时文件
+screenshot_*.png
 截图*
+*.txt
+
+# 本地素材/参考资料（非项目源码）
+终末地素材/
+主页加载动画/
+博文/

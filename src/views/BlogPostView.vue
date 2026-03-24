@@ -140,7 +140,7 @@ watch(
       title: mod.title,
       date: mod.date ? String(mod.date).slice(0, 10) : undefined,
       tags: mod.tags,
-      cover: mod.cover,
+      cover: mod.cover ? `${import.meta.env.BASE_URL}${mod.cover.replace(/^\//, '')}` : undefined,
     }
     PostComponent.value = defineAsyncComponent(entry)
   },

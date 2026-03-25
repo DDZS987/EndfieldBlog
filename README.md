@@ -2,7 +2,7 @@
 
 > 基于 Vue 3 + TypeScript 构建的个人作品集网站，采用 Endfield 风格设计语言
 
-[![Deploy to GitHub Pages](https://github.com/hutao222/my-blog/actions/workflows/deploy.yml/badge.svg)](https://github.com/hutao222/my-blog/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/hutao222/EndfieldBlog/actions/workflows/deploy.yml/badge.svg)](https://github.com/hutao222/EndfieldBlog/actions/workflows/deploy.yml)
 
 🌐 **在线预览**: [endfieldblog.online](https://endfieldblog.online)
 

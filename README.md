@@ -1,6 +1,6 @@
-# Personal Portfolio
+# 《明日方舟:终末地》风格个人博客
 
-> 基于 Vue 3 + TypeScript 构建的个人作品集网站，采用 Endfield 风格设计语言
+> 基于 Vue 3 + TypeScript 构建的个人作品集网站，采用 Endfield 风格设计语言（只是一个作业）
 
 [![Deploy to GitHub Pages](https://github.com/DDZS987/EndfieldBlog/actions/workflows/deploy.yml/badge.svg)](https://github.com/DDZS987/EndfieldBlog/actions/workflows/deploy.yml)
 
